@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#2D5A27"/>
+  <!-- Grid squares arrangement -->
+  <rect x="60"  y="60"  width="170" height="170" rx="20" fill="#E8F0E6"/>
+  <rect x="282" y="60"  width="170" height="170" rx="20" fill="#1A3D16"/>
+  <rect x="60"  y="282" width="170" height="170" rx="20" fill="#1A3D16"/>
+  <rect x="282" y="282" width="170" height="170" rx="20" fill="#E8F0E6"/>
+  <!-- Number 4 in top-left white square -->
+  <text x="145" y="188" font-family="Georgia,serif" font-size="130" font-weight="700" fill="#2D5A27" text-anchor="middle">4</text>
+  <!-- Diagonal line in top-right dark square (Kakuro motif) -->
+  <line x1="302" y1="80" x2="432" y2="210" stroke="#E8F0E6" stroke-width="12" stroke-linecap="round"/>
+  <text x="320" y="115" font-family="Georgia,serif" font-size="48" font-weight="700" fill="#5CB85C" text-anchor="middle">8</text>
+  <text x="414" y="205" font-family="Georgia,serif" font-size="48" font-weight="700" fill="#5CB85C" text-anchor="middle">3</text>
+  <!-- Cage number in bottom-left (Suguru motif) -->
+  <text x="145" y="406" font-family="Georgia,serif" font-size="130" font-weight="700" fill="#5CB85C" text-anchor="middle">7</text>
+  <!-- Number in bottom-right white square -->
+  <text x="367" y="406" font-family="Georgia,serif" font-size="130" font-weight="700" fill="#2D5A27" text-anchor="middle">2</text>
+</svg>

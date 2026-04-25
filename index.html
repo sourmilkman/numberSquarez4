@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#2D5A27">
+<title>Number Squarez 4</title>
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#F5F2EB;
+  --surface:#FFFFFF;
+  --surface-alt:#EDE9E0;
+  --text:#1A1A1A;
+  --text-muted:#8A8578;
+  --accent:#2D5A27;
+  --accent-light:#E8F0E6;
+  --error:#C4453C;
+  --error-light:#FCEAE8;
+  --success:#2D5A27;
+  --success-light:#E8F0E6;
+  --border:#D8D3C8;
+  --cell-black:#2A2A2A;
+  --cell-black-text:#F5F2EB;
+  --cell-empty:#EAE6DC;
+  --cell-filled:#FAFAF7;
+  --cell-given:#F0EDE5;
+  --cell-selected:#2D5A27;
+  --cell-selected-text:#FFFFFF;
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.06);
+  --shadow-md:0 4px 12px rgba(0,0,0,0.08);
+  --shadow-lg:0 8px 30px rgba(0,0,0,0.1);
+  --overlay-bg:rgba(245,242,235,0.92);
+  --star-active:#D4A017;
+  --star-inactive:#D8D3C8;
+  --gold:#D4A017;
+  --gold-light:#FDF6E3;
+  --radius:12px;
+  --radius-sm:8px;
+  --cage-border:#1A1A1A;
+  --cage-satisfied:#2D5A27;
+}
+[data-theme="dark"]{
+  --bg:#141414;
+  --surface:#1E1E1E;
+  --surface-alt:#262626;
+  --text:#E8E4DB;
+  --text-muted:#7A7A72;
+  --accent:#5CB85C;
+  --accent-light:#1E2E1E;
+  --error:#E06056;
+  --error-light:#2E1A18;
+  --success:#5CB85C;
+  --success-light:#1E2E1E;
+  --border:#333330;
+  --cell-black:#0A0A0A;
+  --cell-black-text:#E8E4DB;
+  --cell-empty:#2C2C28;
+  --cell-filled:#222220;
+  --cell-given:#262622;
+  --cell-selected:#5CB85C;
+  --cell-selected-text:#141414;
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.2);
+  --shadow-md:0 4px 12px rgba(0,0,0,0.3);
+  --shadow-lg:0 8px 30px rgba(0,0,0,0.4);
+  --overlay-bg:rgba(20,20,20,0.94);
+  --star-active:#E8B930;
+  --star-inactive:#444440;
+  --gold:#E8B930;
+  --gold-light:#2A2510;
+  --cage-border:#E8E4DB;
+  --cage-satisfied:#5CB85C;
+}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:16px;-webkit-tap-highlight-color:transparent;}
+#app{position:fixed;inset:0;overflow:hidden;background:var(--bg);transition:background 0.3s ease,color 0.3s ease;}
+
+/* ── SCREENS ── */
+.screen{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity 0.35s ease,transform 0.35s ease;transform:translateY(20px);overflow-y:auto;display:flex;flex-direction:column;}
+.screen.active{opacity:1;pointer-events:auto;transform:translateY(0);}
+
+/* ── GLOBAL TOGGLES ── */
+.toggle-btn{position:fixed;z-index:200;background:var(--surface);border:1px solid var(--border);border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;box-shadow:var(--shadow-sm);transition:all 0.2s ease;user-select:none;}
+.toggle-btn:active{transform:scale(0.9);}
+#theme-toggle{top:12px;right:58px;}
+#mute-toggle{top:12px;right:12px;}
+
+/* ── MENU SCREEN ── */
+#menu-screen{padding:max(64px,8vh) min(24px,5vw) 32px;}
+.menu-title{text-align:center;margin-bottom:min(32px,4vh);}
+.menu-title h1{font-family:'DM Mono',monospace;font-size:clamp(22px,4vw,30px);font-weight:500;color:var(--text);line-height:1.2;}
+.menu-title p{font-size:13px;color:var(--text-muted);margin-top:6px;}
+.menu-modes{display:flex;flex-direction:column;gap:min(16px,2.5vh);}
+.mode-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:min(20px,3vh) min(20px,4vw);cursor:pointer;transition:all 0.2s ease;box-shadow:var(--shadow-sm);}
+.mode-card:active{transform:scale(0.98);}
+.mode-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.mode-card h2{font-family:'DM Mono',monospace;font-size:clamp(16px,3vw,19px);font-weight:500;}
+.mode-badge{font-size:10px;font-weight:700;letter-spacing:0.08em;color:var(--accent);background:var(--accent-light);border-radius:4px;padding:2px 7px;text-transform:uppercase;}
+.mode-card p{font-size:13px;color:var(--text-muted);line-height:1.5;margin-bottom:10px;}
+.mode-stats{display:flex;gap:16px;}
+.mode-stat{font-size:12px;color:var(--text-muted);}
+.mode-stat strong{display:block;font-size:16px;font-weight:600;color:var(--text);font-family:'DM Mono',monospace;}
+
+/* ── SETUP SCREEN ── */
+#setup-screen{padding:max(64px,8vh) min(24px,5vw) 32px;}
+.setup-header{text-align:center;margin-bottom:min(24px,3vh);}
+.setup-header h2{font-family:'DM Mono',monospace;font-size:clamp(20px,3.5vw,26px);font-weight:500;}
+.setup-header p{font-size:13px;color:var(--text-muted);margin-top:5px;}
+.setup-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;}
+.setup-section-label{font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;}
+.diff-options{display:flex;gap:8px;}
+.diff-btn{flex:1;padding:10px 8px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.2s ease;text-align:center;}
+.diff-btn.selected{background:var(--accent);color:var(--cell-selected-text);border-color:var(--accent);}
+.diff-btn:active{transform:scale(0.95);}
+.setup-best{font-size:12px;color:var(--text-muted);text-align:center;min-height:18px;margin-bottom:8px;}
+.start-btn{width:100%;padding:15px;background:var(--accent);color:var(--cell-selected-text);border:none;border-radius:var(--radius);font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;cursor:pointer;transition:all 0.2s ease;margin-bottom:12px;}
+.start-btn:active{transform:scale(0.98);opacity:0.9;}
+.back-link{display:block;text-align:center;font-size:13px;color:var(--text-muted);cursor:pointer;padding:8px;}
+.back-link:active{opacity:0.6;}
+
+/* ── GAME SCREEN ── */
+#game-screen{display:flex;flex-direction:column;height:100%;}
+.game-topbar{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;min-height:52px;flex-shrink:0;}
+.game-topbar-left{display:flex;gap:6px;align-items:center;}
+.btn-icon{width:36px;height:36px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:all 0.15s ease;user-select:none;flex-shrink:0;}
+.btn-icon:active{transform:scale(0.9);}
+.game-score-display{display:flex;align-items:center;gap:12px;}
+.live-score{font-family:'DM Mono',monospace;font-size:18px;font-weight:500;color:var(--text);}
+.timer{font-family:'DM Mono',monospace;font-size:14px;color:var(--text-muted);min-width:48px;text-align:right;}
+.game-mode-label{text-align:center;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);padding:0 12px 6px;flex-shrink:0;}
+
+/* ── GRID AREA ── */
+.grid-container{display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:4px 8px;}
+.grid-wrapper{position:relative;display:inline-block;}
+.grid{display:grid;gap:0;background:var(--border);border:2px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-md);}
+
+/* ── CELLS ── */
+.cell{display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-weight:500;cursor:pointer;transition:background 0.12s ease,color 0.12s ease;user-select:none;position:relative;border:0.5px solid var(--border);}
+.cell.white{background:var(--cell-empty);color:var(--text);}
+.cell.white.given{background:var(--cell-given);color:var(--text);cursor:default;}
+.cell.white.filled{background:var(--cell-filled);color:var(--accent);}
+.cell.white.selected{background:var(--cell-selected);color:var(--cell-selected-text);}
+.cell.white.error{background:var(--error-light);color:var(--error);}
+.cell.white.error.selected{background:var(--error);color:#fff;}
+.cell.black{background:var(--cell-black);cursor:default;border-color:var(--cell-black);}
+.cell.blank{background:var(--cell-black);cursor:default;border-color:var(--cell-black);}
+
+/* ── KAKURO CLUE CELLS ── */
+.cell.clue{background:var(--cell-black);color:var(--cell-black-text);padding:0;overflow:hidden;cursor:default;border-color:var(--cell-black);}
+.clue-inner{position:relative;width:100%;height:100%;}
+.clue-inner svg{position:absolute;inset:0;width:100%;height:100%;}
+.clue-down{position:absolute;bottom:10%;left:6%;font-family:'DM Mono',monospace;font-weight:500;color:var(--cell-black-text);line-height:1;}
+.clue-right{position:absolute;top:8%;right:5%;font-family:'DM Mono',monospace;font-weight:500;color:var(--cell-black-text);line-height:1;}
+
+/* ── SUGURU CAGE LAYER ── */
+.cage-layer{position:absolute;top:0;left:0;pointer-events:none;z-index:3;}
+.cage-seg{position:absolute;background:var(--cage-border);transition:background 0.2s ease;}
+.cage-seg.satisfied{background:var(--cage-satisfied);}
+
+/* ── NUMBER TRAY ── */
+.tray-section{flex:1;display:flex;flex-direction:column;justify-content:center;padding:8px 12px;min-height:0;}
+.tray-label{font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);text-align:center;margin-bottom:8px;}
+.number-tray{display:flex;flex-wrap:wrap;gap:var(--tray-gap,6px);justify-content:center;align-items:center;}
+.tray-number{width:var(--tray-size,48px);height:var(--tray-size,48px);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:var(--tray-font,18px);font-weight:500;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all 0.15s ease;user-select:none;touch-action:none;}
+.tray-number:active,.tray-number.active{background:var(--accent);color:var(--cell-selected-text);border-color:var(--accent);transform:scale(0.95);}
+.tray-number.used{opacity:0.35;}
+
+/* ── GAME ACTIONS ── */
+.game-actions{display:flex;gap:8px;padding:8px 12px 16px;flex-shrink:0;}
+.action-btn{flex:1;padding:11px 4px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:var(--text);cursor:pointer;transition:all 0.15s ease;text-align:center;}
+.action-btn:active{transform:scale(0.95);opacity:0.8;}
+.action-btn.primary{background:var(--accent);color:var(--cell-selected-text);border-color:var(--accent);}
+.action-btn:disabled{opacity:0.35;cursor:default;pointer-events:none;}
+
+/* ── HOW-TO OVERLAY ── */
+#howto-overlay{position:fixed;inset:0;z-index:300;background:var(--overlay-bg);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:max(56px,7vh) min(24px,5vw) 32px;opacity:0;pointer-events:none;transition:opacity 0.3s ease;overflow-y:auto;}
+#howto-overlay.active{opacity:1;pointer-events:auto;}
+.howto-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;max-width:480px;width:100%;box-shadow:var(--shadow-md);}
+.howto-card h3{font-family:'DM Mono',monospace;font-size:16px;font-weight:500;margin-bottom:12px;}
+.howto-card p,.howto-card li{font-size:13px;color:var(--text-muted);line-height:1.6;}
+.howto-card ul{padding-left:16px;margin-top:6px;}
+.howto-card ul li{margin-bottom:4px;}
+.howto-close{margin-top:16px;padding:12px 32px;background:var(--accent);color:var(--cell-selected-text);border:none;border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;}
+
+/* ── WIN OVERLAY ── */
+#win-overlay{position:fixed;inset:0;z-index:300;background:var(--overlay-bg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;opacity:0;pointer-events:none;transition:opacity 0.4s ease;}
+#win-overlay.active{opacity:1;pointer-events:auto;}
+.win-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px 24px;max-width:360px;width:100%;text-align:center;box-shadow:var(--shadow-lg);}
+.win-title{font-family:'DM Mono',monospace;font-size:clamp(22px,4vw,28px);font-weight:500;margin-bottom:6px;}
+.win-subtitle{font-size:13px;color:var(--text-muted);margin-bottom:20px;}
+.win-stars{font-size:28px;letter-spacing:6px;margin-bottom:16px;}
+.win-score{font-family:'DM Mono',monospace;font-size:36px;font-weight:500;color:var(--accent);margin-bottom:4px;}
+.win-score-label{font-size:12px;color:var(--text-muted);margin-bottom:16px;}
+.win-breakdown{background:var(--surface-alt);border-radius:var(--radius-sm);padding:12px;margin-bottom:20px;text-align:left;}
+.win-breakdown-row{display:flex;justify-content:space-between;font-size:12px;color:var(--text-muted);padding:2px 0;}
+.win-breakdown-row.penalty{color:var(--error);}
+.win-best{font-size:12px;color:var(--gold);font-weight:600;margin-bottom:16px;min-height:18px;}
+.win-actions{display:flex;gap:10px;}
+.win-btn{flex:1;padding:13px 8px;border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.15s ease;border:1px solid var(--border);}
+.win-btn.primary{background:var(--accent);color:var(--cell-selected-text);border-color:var(--accent);}
+.win-btn.secondary{background:var(--surface);color:var(--text);}
+.win-btn:active{transform:scale(0.97);}
+
+/* ── ANIMATIONS ── */
+@keyframes pop-in{0%{transform:scale(0);opacity:0}50%{transform:scale(1.2);opacity:1}75%{transform:scale(0.92)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}15%{transform:translateX(-4px)}30%{transform:translateX(4px)}45%{transform:translateX(-3px)}60%{transform:translateX(3px)}75%{transform:translateX(-2px)}}
+@keyframes hint-glow{0%{transform:scale(0);opacity:0;box-shadow:0 0 0 0 var(--accent)}40%{transform:scale(1.15);opacity:1;box-shadow:0 0 12px 2px var(--accent)}70%{transform:scale(0.95);box-shadow:0 0 4px 0 var(--accent)}100%{transform:scale(1);box-shadow:none}}
+@keyframes win-ripple{0%{transform:scale(1)}40%{transform:scale(1.1);background:var(--success-light);color:var(--success)}100%{transform:scale(1)}}
+.anim-pop-in{animation:pop-in 0.32s cubic-bezier(0.34,1.56,0.64,1) forwards;}
+.anim-shake{animation:shake 0.4s ease;}
+.anim-hint{animation:hint-glow 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards;}
+.anim-win{animation:win-ripple 0.4s ease;}
+</style>
+</head>
+<body>
+<div id="app">
+  <!-- Global toggles -->
+  <div class="toggle-btn" id="theme-toggle" title="Toggle theme">☀️</div>
+  <div class="toggle-btn" id="mute-toggle" title="Toggle sound">🔊</div>
+
+  <!-- MENU SCREEN -->
+  <div id="menu-screen" class="screen active">
+    <div class="menu-title">
+      <h1>Number Squarez 4</h1>
+      <p>Two puzzles of logic and constraint</p>
+    </div>
+    <div class="menu-modes">
+      <div class="mode-card" data-mode="kakuro">
+        <div class="mode-card-top">
+          <h2>Kakuro</h2>
+          <span class="mode-badge">Cross-Sums</span>
+        </div>
+        <p>Fill white cells with digits 1–9. Each run must sum to its clue with no repeated digits.</p>
+        <div class="mode-stats">
+          <div class="mode-stat"><strong id="menu-kakuro-best">—</strong>Best</div>
+          <div class="mode-stat"><strong id="menu-kakuro-wins">0</strong>Wins</div>
+          <div class="mode-stat"><strong id="menu-kakuro-stars">0</strong>Stars</div>
+        </div>
+      </div>
+      <div class="mode-card" data-mode="suguru">
+        <div class="mode-card-top">
+          <h2>Suguru</h2>
+          <span class="mode-badge">Tectonics</span>
+        </div>
+        <p>Fill every cell. A cage of n cells uses 1–n once each. Identical numbers may not touch, even diagonally.</p>
+        <div class="mode-stats">
+          <div class="mode-stat"><strong id="menu-suguru-best">—</strong>Best</div>
+          <div class="mode-stat"><strong id="menu-suguru-wins">0</strong>Wins</div>
+          <div class="mode-stat"><strong id="menu-suguru-stars">0</strong>Stars</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETUP SCREEN -->
+  <div id="setup-screen" class="screen">
+    <div class="setup-header">
+      <h2 id="setup-title">Kakuro</h2>
+      <p id="setup-desc">Choose difficulty</p>
+    </div>
+    <div class="setup-section">
+      <div class="setup-section-label">Difficulty</div>
+      <div class="diff-options">
+        <button class="diff-btn" data-diff="easy">Easy</button>
+        <button class="diff-btn selected" data-diff="medium">Medium</button>
+        <button class="diff-btn" data-diff="hard">Hard</button>
+      </div>
+    </div>
+    <div class="setup-best" id="setup-best"></div>
+    <button class="start-btn" id="start-btn">Play</button>
+    <span class="back-link" id="back-link">← Back to menu</span>
+  </div>
+
+  <!-- GAME SCREEN -->
+  <div id="game-screen" class="screen">
+    <div class="game-topbar">
+      <div class="game-topbar-left">
+        <div class="btn-icon" id="btn-back">←</div>
+        <div class="btn-icon" id="btn-howto">?</div>
+      </div>
+      <div class="game-score-display">
+        <div class="live-score" id="live-score">0</div>
+        <div class="timer" id="timer">0:00</div>
+      </div>
+    </div>
+    <div class="game-mode-label" id="game-mode-label">KAKURO · MEDIUM</div>
+    <div class="grid-container">
+      <div class="grid-wrapper">
+        <div class="grid" id="grid"></div>
+        <div class="cage-layer" id="cage-layer"></div>
+      </div>
+    </div>
+    <div class="tray-section" id="tray-section">
+      <div class="tray-label">Select a number</div>
+      <div class="number-tray" id="number-tray"></div>
+    </div>
+    <div class="game-actions">
+      <button class="action-btn" id="btn-undo" disabled>Undo</button>
+      <button class="action-btn" id="btn-clear">Clear</button>
+      <button class="action-btn" id="btn-hint">Hint (3)</button>
+      <button class="action-btn primary" id="btn-check">Check</button>
+    </div>
+  </div>
+
+  <!-- HOW-TO OVERLAY -->
+  <div id="howto-overlay">
+    <div class="howto-card" id="howto-content">
+      <h3 id="howto-title">How to Play</h3>
+      <div id="howto-body"></div>
+    </div>
+    <button class="howto-close" id="howto-close">Got it</button>
+  </div>
+
+  <!-- WIN OVERLAY -->
+  <div id="win-overlay">
+    <div class="win-card">
+      <div class="win-title">Puzzle Solved!</div>
+      <div class="win-subtitle" id="win-subtitle"></div>
+      <div class="win-stars" id="win-stars"></div>
+      <div class="win-score" id="win-score"></div>
+      <div class="win-score-label">points</div>
+      <div class="win-breakdown" id="win-breakdown"></div>
+      <div class="win-best" id="win-best"></div>
+      <div class="win-actions">
+        <button class="win-btn secondary" id="win-menu">Menu</button>
+        <button class="win-btn primary" id="win-again">Play Again</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="game.js?v=3"></script>
+</body>
+</html>
